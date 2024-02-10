@@ -31,11 +31,11 @@ Create chart name and version as used by the chart label.
 {{- end }}
 
 {{/*
-Common labels
+Common labels for init
 */}}
-{{- define "hyperf.labels" -}}
+{{- define "hyperf.init.labels" -}}
 helm.sh/chart: {{ include "hyperf.chart" . }}
-{{ include "hyperf.selectorLabels" . }}
+{{ include "hyperf.init.selectorLabels" . }}
 {{- if .Chart.AppVersion }}
 app.kubernetes.io/version: {{ .Chart.AppVersion | quote }}
 {{- end }}
@@ -43,10 +43,30 @@ app.kubernetes.io/managed-by: {{ .Release.Service }}
 {{- end }}
 
 {{/*
-Selector labels
+Selector labels for init
 */}}
-{{- define "hyperf.selectorLabels" -}}
-app.kubernetes.io/name: {{ include "hyperf.name" . }}
+{{- define "hyperf.init.selectorLabels" -}}
+app.kubernetes.io/name: {{ include "hyperf.fullname" . }}-init
+app.kubernetes.io/instance: {{ .Release.Name }}
+{{- end }}
+
+{{/*
+Common labels for server
+*/}}
+{{- define "hyperf.server.labels" -}}
+helm.sh/chart: {{ include "hyperf.chart" . }}
+{{ include "hyperf.server.selectorLabels" . }}
+{{- if .Chart.AppVersion }}
+app.kubernetes.io/version: {{ .Chart.AppVersion | quote }}
+{{- end }}
+app.kubernetes.io/managed-by: {{ .Release.Service }}
+{{- end }}
+
+{{/*
+Selector labels for server
+*/}}
+{{- define "hyperf.server.selectorLabels" -}}
+app.kubernetes.io/name: {{ include "hyperf.fullname" . }}
 app.kubernetes.io/instance: {{ .Release.Name }}
 {{- end }}
 
