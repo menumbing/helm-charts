@@ -11,6 +11,7 @@ init:
   command: ["php", "bin/hyperf.php"]
   args:
     - "migrate"
+    - "--force"
   resources: {}
   podAnnotations: {}
 
