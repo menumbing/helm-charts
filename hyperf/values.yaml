@@ -8,7 +8,7 @@ image:
 
 init:
   enabled: true
-  command: ["php", "bin/hyperf"]
+  command: ["php", "bin/hyperf.php"]
   args:
     - "migrate"
   resources: {}
@@ -17,7 +17,7 @@ init:
 server:
   enabled: true
   replicaCount: 1
-  command: ["php", "bin/hyperf"]
+  command: ["php", "bin/hyperf.php"]
   service:
     type: ClusterIP
     port: 80
