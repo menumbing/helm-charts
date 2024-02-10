@@ -1,0 +1,12 @@
+{{- if .Values.configEnv }}
+apiVersion: v1
+kind: Secret
+metadata:
+  name: {{ include "hyperf.fullname" . }}-config-env
+  labels:
+    {{- include "hyperf.server.labels" . | nindent 4 }}
+data:
+  {{- range $key, $value := .Values.configEnv }}
+  {{ $key }}: {{ $value | toString | quote }}
+  {{- end }}
+{{- end }}

@@ -1,0 +1,98 @@
+{{- if .Values.server.enabled -}}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "hyperf.fullname" . }}
+  labels:
+    {{- include "hyperf.server.labels" . | nindent 4 }}
+  annotations:
+    checksum/env: {{ include (print .Template.BasePath "/secret-env.yaml") . | sha256sum }}
+spec:
+  {{- if not .Values.server.autoscaling.enabled}}
+  replicas: {{.Values.server.replicaCount}}
+  {{- end }}
+  selector:
+    matchLabels:
+      {{- include "hyperf.server.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      {{- with .Values.server.podAnnotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      labels:
+        {{- include "hyperf.server.selectorLabels" . | nindent 8 }}
+    spec:
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      serviceAccountName: {{ include "hyperf.serviceAccountName" . }}
+      securityContext:
+        {{- toYaml .Values.server.podSecurityContext | nindent 8 }}
+      containers:
+        - name: {{ include "hyperf.fullname" . }}
+          securityContext:
+            {{- toYaml .Values.server.securityContext | nindent 12 }}
+          image: "{{ (.Values.server.image | default .Values.image).repository }}:{{ (.Values.server.image | default .Values.image).tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ (.Values.server.image | default .Values.image).pullPolicy | default "IfNotPresent" }}
+          command: {{ tpl (toJson .Values.server.command) . }}
+          args: {{ tpl (toJson .Values.server.args) . }}
+          ports:
+            - name: http
+              containerPort: 80
+              protocol: TCP
+          envFrom:
+            {{- if .Values.secretEnv }}
+            - secretRef:
+                name: {{ include "hyperf.fullname" . }}-secret-env
+            {{- end }}
+            {{- if .Values.configEnv }}
+            - configMapRef:
+                name: {{ include "hyperf.fullname" . }}-config-env
+            {{- end }}
+          volumeMounts:
+            - name: env
+              readOnly: true
+              mountPath: "/srv/.env"
+              subPath: ".env"
+            {{- with .Values.server.volumeMounts }}
+            {{- tpl (toYaml .) $ | nindent 12 -}}
+            {{- end }}
+          {{- with .Values.server.livenessProbe }}
+          livenessProbe:
+            {{- tpl (toYaml .) $ | nindent 12 -}}
+          {{- end }}
+          {{- with .Values.server.readinessProbe }}
+          readinessProbe:
+            {{- tpl (toYaml .) $ | nindent 12 -}}
+          {{- end }}
+          resources:
+            {{- toYaml .Values.server.resources | nindent 12 }}
+        {{- with .Values.server.sidecars }}
+        {{- tpl (toYaml .) $ | nindent 8 -}}
+        {{- end }}
+      volumes:
+        - name: env
+          secret:
+            secretName: {{ include "hyperf.fullname" . }}-env
+        {{- with .Values.server.volumes }}
+        {{- tpl (toYaml .) $ | nindent 8 -}}
+        {{- end }}
+      {{- with .Values.server.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.server.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.server.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.server.topologySpreadConstraints }}
+      topologySpreadConstraints:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+{{- end }}

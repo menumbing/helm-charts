@@ -1,0 +1,73 @@
+nameOverride: ""
+fullnameOverride: ""
+
+image:
+  repository: pandawa/pandawa
+  pullPolicy: IfNotPresent
+  tag: ""
+
+init:
+  enabled: true
+  command: ["php", "bin/hyperf"]
+  args:
+    - "migrate"
+  resources: {}
+  podAnnotations: {}
+
+server:
+  enabled: true
+  replicaCount: 1
+  command: ["php", "bin/hyperf"]
+  service:
+    type: ClusterIP
+    port: 80
+  args:
+    - "start"
+  autoscaling:
+    enabled: false
+    minReplicas: 1
+    maxReplicas: 100
+    targetCPUUtilizationPercentage: 80
+    behavior:
+      scaleDown:
+        stabilizationWindowSeconds: 600
+        policies:
+          - type: Percent
+            value: 10
+            periodSeconds: 60
+  sidecars: []
+  volumes: []
+  volumeMounts: []
+  resources: {}
+  podAnnotations: {}
+  podSecurityContext: {}
+  securityContext: {}
+  nodeSelector: {}
+  affinity: {}
+  tolerations: []
+  topologySpreadConstraints: []
+
+serviceAccount:
+  create: false
+  annotations: {}
+  name: ""
+
+ingress:
+  enabled: false
+  className: ""
+  annotations: {}
+  hosts:
+    - host: chart-example.local
+      paths:
+        - path: /
+          pathType: ImplementationSpecific
+  tls: []
+  stripPrefixes: []
+
+env: ""
+
+configEnv: {}
+
+secretEnv: {}
+
+imagePullSecrets: []

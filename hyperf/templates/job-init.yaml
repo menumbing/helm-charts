@@ -1,0 +1,52 @@
+{{- if .Values.init.enabled }}
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: {{ include "hyperf.fullname" . }}-init
+  labels:
+    {{- include "hyperf.init.labels" . | nindent 4 }}
+  annotations:
+    "helm.sh/hook": post-install,post-upgrade
+    "helm.sh/hook-delete-policy": before-hook-creation
+spec:
+  template:
+    metadata:
+      {{- with .Values.init.podAnnotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      labels:
+        {{- include "hyperf.init.selectorLabels" . | nindent 8 }}
+    spec:
+      restartPolicy: Never
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      containers:
+        - name: {{ include "hyperf.fullname" . }}-init
+          image: "{{ (.Values.init.image | default .Values.image).repository }}:{{ (.Values.init.image | default .Values.image).tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ (.Values.init.image | default .Values.image).pullPolicy | default "IfNotPresent" }}
+          command: {{ tpl (toJson .Values.init.command) . }}
+          args: {{ tpl (toJson .Values.init.args) . }}
+          envFrom:
+            {{- if .Values.secretEnv }}
+            - secretRef:
+                name: {{ include "hyperf.fullname" . }}-secret-env
+            {{- end }}
+            {{- if .Values.configEnv }}
+            - configMapRef:
+                name: {{ include "hyperf.fullname" . }}-config-env
+            {{- end }}
+          volumeMounts:
+            - name: env
+              readOnly: true
+              mountPath: "/srv/.env"
+              subPath: ".env"
+          resources:
+            {{- toYaml .Values.server.resources | nindent 12 }}
+      volumes:
+        - name: env
+          secret:
+            secretName: {{ include "hyperf.fullname" . }}-env
+{{- end }}
