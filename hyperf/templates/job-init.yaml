@@ -44,7 +44,7 @@ spec:
               mountPath: "/srv/.env"
               subPath: ".env"
           resources:
-            {{- toYaml .Values.server.resources | nindent 12 }}
+            {{- toYaml .Values.init.resources | nindent 12 }}
       volumes:
         - name: env
           secret:
