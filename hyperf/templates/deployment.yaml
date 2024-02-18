@@ -52,10 +52,12 @@ spec:
                 name: {{ include "hyperf.fullname" . }}-config-env
             {{- end }}
           volumeMounts:
+            {{- if .Values.env }}
             - name: env
               readOnly: true
               mountPath: "/srv/.env"
               subPath: ".env"
+            {{- end }}
             {{- with .Values.server.volumeMounts }}
             {{- tpl (toYaml .) $ | nindent 12 -}}
             {{- end }}
@@ -73,9 +75,11 @@ spec:
         {{- tpl (toYaml .) $ | nindent 8 -}}
         {{- end }}
       volumes:
+        {{- if .Values.env }}
         - name: env
           secret:
             secretName: {{ include "hyperf.fullname" . }}-env
+        {{- end }}
         {{- with .Values.server.volumes }}
         {{- tpl (toYaml .) $ | nindent 8 -}}
         {{- end }}
