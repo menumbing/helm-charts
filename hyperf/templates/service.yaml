@@ -1,5 +1,5 @@
-{{- range .Values.services }}
 {{- $fullName := include "hyperf.fullname" . -}}
+{{- range .Values.services }}
 apiVersion: v1
 kind: Service
 metadata:
