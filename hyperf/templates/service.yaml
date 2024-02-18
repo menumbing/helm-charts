@@ -5,7 +5,7 @@ kind: Service
 metadata:
   name: {{ default $fullName .name }}
   labels:
-    {{- include "hyperf.server.labels" . | nindent 4 }}
+    {{- include "hyperf.server.labels" $ | nindent 4 }}
 spec:
   type: {{ default "ClusterIP" .type }}
   ports:
@@ -16,5 +16,5 @@ spec:
       name: {{ default "http" .name }}
     {{- end }}
   selector:
-    {{- include "hyperf.server.selectorLabels" . | nindent 4 }}
+    {{- include "hyperf.server.selectorLabels" $ | nindent 4 }}
 {{- end  }}
