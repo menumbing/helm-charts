@@ -3,12 +3,12 @@ entries:
   hyperf:
   - apiVersion: v2
     appVersion: 1.0.0
-    created: "2024-02-18T11:19:08.827118+07:00"
+    created: "2024-02-18T11:29:41.53657+07:00"
     description: A Helm chart for Hyperf framework
-    digest: b08bbfa391f55c52df6068890fc4c4f8b63328b7d480b71342f3682f6c6d3e24
+    digest: f87614e64a8cd00573b84de937d43e8c9e5fdcec30a602e883a13700e4608971
     name: hyperf
     type: application
     urls:
     - hyperf-1.0.5.tgz
     version: 1.0.5
-generated: "2024-02-18T11:19:08.826733+07:00"
+generated: "2024-02-18T11:29:41.536218+07:00"
