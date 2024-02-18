@@ -1,15 +1,20 @@
+{{- range .Values.services }}
+{{- $fullName := include "hyperf.fullname" . -}}
 apiVersion: v1
 kind: Service
 metadata:
-  name: {{ include "hyperf.fullname" . }}
+  name: {{ default $fullName .name }}
   labels:
     {{- include "hyperf.server.labels" . | nindent 4 }}
 spec:
-  type: {{ .Values.server.service.type }}
+  type: {{ default "ClusterIP" .type }}
   ports:
-    - port: {{ .Values.server.service.port }}
-      targetPort: http
-      protocol: TCP
-      name: http
+    {{ range .ports }}
+    - port: {{ default 80 .port }}
+      targetPort: {{ default "http" .targetPort }}
+      protocol: {{ default "TCP" .protocol }}
+      name: {{ default "http" .name }}
+    {{- end }}
   selector:
     {{- include "hyperf.server.selectorLabels" . | nindent 4 }}
+{{- end  }}
