@@ -27,6 +27,7 @@ services:
 server:
   enabled: true
   replicaCount: 1
+  terminationGracePeriodSeconds: 30
   command: ["php", "bin/hyperf.php"]
   args:
     - "start"
