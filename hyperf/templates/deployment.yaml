@@ -11,6 +11,10 @@ spec:
   {{- if not .Values.server.autoscaling.enabled}}
   replicas: {{.Values.server.replicaCount}}
   {{- end }}
+  {{- with .Values.server.updateStrategy }}
+  strategy:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
   selector:
     matchLabels:
       {{- include "hyperf.server.selectorLabels" . | nindent 6 }}

@@ -1,0 +1,16 @@
+{{- if .Values.server.pdb.enabled }}
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  name: {{ include "hyperf.fullname" . }}
+  labels:
+    {{- include "hyperf.server.labels" . | nindent 4 }}
+spec:
+  selector:
+    matchLabels:
+      {{- include "hyperf.server.selectorLabels" . | nindent 6 }}
+  minAvailable: {{ .Values.server.pdb.minAvailable }}
+  {{- if not (kindIs "invalid" .Values.server.pdb.maxUnavailable) }}
+  maxUnavailable: {{ .Values.server.pdb.maxUnavailable }}
+  {{- end }}
+{{- end }}
