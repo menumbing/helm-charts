@@ -31,6 +31,13 @@ server:
   command: ["php", "bin/hyperf.php"]
   args:
     - "start"
+  updateStrategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: "50%"
+  pdb:
+    enabled: false
+    minAvailable: "50%"
   autoscaling:
     enabled: false
     minReplicas: 1
