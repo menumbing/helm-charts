@@ -38,15 +38,19 @@ spec:
             - configMapRef:
                 name: {{ include "hyperf.fullname" . }}-config-env
             {{- end }}
+          {{- if .Values.env }}
           volumeMounts:
             - name: env
               readOnly: true
               mountPath: "/srv/.env"
               subPath: ".env"
+          {{- end }}
           resources:
             {{- toYaml .Values.init.resources | nindent 12 }}
+      {{- if .Values.env }}
       volumes:
         - name: env
           secret:
             secretName: {{ include "hyperf.fullname" . }}-env
+      {{- end }}
 {{- end }}
