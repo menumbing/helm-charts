@@ -87,4 +87,6 @@ configEnv: {}
 
 secretEnv: {}
 
+extraEnvFrom: []
+
 imagePullSecrets: []
