@@ -6,9 +6,10 @@ metadata:
   labels:
     {{- include "hyperf.init.labels" . | nindent 4 }}
   annotations:
-    "helm.sh/hook": post-install,post-upgrade
+    "helm.sh/hook": pre-install,pre-upgrade
     "helm.sh/hook-delete-policy": before-hook-creation
 spec:
+  backoffLimit: 3
   template:
     metadata:
       {{- with .Values.init.podAnnotations }}
