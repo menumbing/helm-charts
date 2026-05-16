@@ -5,6 +5,10 @@ metadata:
   name: {{ include "hyperf.fullname" . }}-config-env
   labels:
     {{- include "hyperf.server.labels" . | nindent 4 }}
+  {{- if .Values.argocd.enabled }}
+  annotations:
+    argocd.argoproj.io/sync-wave: {{ .Values.argocd.syncWave.dependencies | quote }}
+  {{- end }}
 data:
   {{- range $key, $value := .Values.configEnv }}
   {{ $key }}: {{ $value | toString | quote }}
