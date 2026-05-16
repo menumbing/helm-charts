@@ -10,8 +10,9 @@ metadata:
     "helm.sh/hook": pre-install,pre-upgrade
     "helm.sh/hook-delete-policy": before-hook-creation
     {{- else }}
+    argocd.argoproj.io/hook: Sync
+    argocd.argoproj.io/hook-delete-policy: BeforeHookCreation
     argocd.argoproj.io/sync-wave: {{ .Values.argocd.syncWave.init | quote }}
-    argocd.argoproj.io/sync-options: Replace=true
     {{- end }}
 spec:
   backoffLimit: 3
