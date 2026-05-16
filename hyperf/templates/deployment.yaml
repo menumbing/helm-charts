@@ -7,6 +7,9 @@ metadata:
     {{- include "hyperf.server.labels" . | nindent 4 }}
   annotations:
     checksum/env: {{ include (print .Template.BasePath "/secret-env.yaml") . | sha256sum }}
+    {{- if .Values.argocd.enabled }}
+    argocd.argoproj.io/sync-wave: {{ .Values.argocd.syncWave.workloads | quote }}
+    {{- end }}
 spec:
   {{- if not .Values.server.autoscaling.enabled}}
   replicas: {{.Values.server.replicaCount}}
